@@ -12,7 +12,6 @@ pip install -e .
 >>> import gym
 >>> import gym_x
 >>> env = gym.make('GoldRushDiscrete-v0')
->>> env.action_space()
 >>> env.action_space
 Discrete(4)
 >>> env.reset()

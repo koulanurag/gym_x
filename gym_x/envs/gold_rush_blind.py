@@ -1,7 +1,10 @@
+import logging
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 class GoldRushB(gym.Env):
@@ -12,6 +15,7 @@ class GoldRushB(gym.Env):
     Observation Space : Continuous
     Action Space : Discrete
     """
+    metadata = {'render.modes': ['human']}
 
     def __init__(self):
         self.obs_size = 1
@@ -27,7 +31,7 @@ class GoldRushB(gym.Env):
         self._curr_mode = None
         self.seed()
 
-    def step(self, action):
+    def _step(self, action):
         if action >= self.total_actions:
             raise ValueError("action must be one of %r" % range(self.total_actions))
 
@@ -53,17 +57,17 @@ class GoldRushB(gym.Env):
     def get_desired_action(self):
         return self._curr_mode
 
-    def reset(self):
+    def _reset(self):
         self._clock = 0
         self._curr_mode_steps = 0
         obs = self._get_observation()
         self._curr_mode = 0
         return obs
 
-    def close(self):
+    def _close(self):
         pass
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         self.np_random, seed1 = seeding.np_random(seed)
         seed2 = seeding.hash_seed(seed1 + 1) % 2 ** 31
         return [seed1, seed2]
