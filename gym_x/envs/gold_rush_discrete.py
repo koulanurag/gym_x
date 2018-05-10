@@ -74,3 +74,6 @@ class GoldRushD(gym.Env):
         self.np_random, seed1 = seeding.np_random(seed)
         seed2 = seeding.hash_seed(seed1 + 1) % 2 ** 31
         return [seed1, seed2]
+
+    def _render(self, mode="human", close=False):
+        pass

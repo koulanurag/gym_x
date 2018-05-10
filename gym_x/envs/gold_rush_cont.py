@@ -43,8 +43,8 @@ class GoldRushC(gym.Env):
         self._clock += 1
         next_obs = self._get_observation()
         self._update_mode()
-        # done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
-        done = True if self._clock % self.spec.max_episode_steps == 0 else False
+        done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
+        # done = True if self._clock % self.spec.max_episode_steps == 0 else False
         info = {'desired_action': self.get_desired_action()}
         return next_obs, reward, done, info
 
@@ -76,3 +76,5 @@ class GoldRushC(gym.Env):
         self.np_random, seed1 = seeding.np_random(seed)
         seed2 = seeding.hash_seed(seed1 + 1) % 2 ** 31
         return [seed1, seed2]
+    def _render(self, mode="human", close=False):
+        pass
