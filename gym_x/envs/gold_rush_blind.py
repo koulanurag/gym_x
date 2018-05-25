@@ -31,7 +31,7 @@ class GoldRushB(gym.Env):
         self._curr_mode = None
         self.seed()
 
-    def _step(self, action):
+    def step(self, action):
         if action >= self.total_actions:
             raise ValueError("action must be one of %r" % range(self.total_actions))
 
@@ -41,8 +41,8 @@ class GoldRushB(gym.Env):
         self._clock += 1
         next_obs = self._get_observation()
         self._update_mode()
-        # done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
-        done = True if self._clock % self.spec.max_episode_steps == 0 else False
+        # done = True if self._clock % self.spec.max_episode_steps == 0 else False
+        done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
         info = {'desired_action': self.get_desired_action()}
         return next_obs, reward, done, info
 
@@ -57,20 +57,20 @@ class GoldRushB(gym.Env):
     def get_desired_action(self):
         return self._curr_mode
 
-    def _reset(self):
+    def reset(self):
         self._clock = 0
         self._curr_mode_steps = 0
         obs = self._get_observation()
         self._curr_mode = 0
         return obs
 
-    def _close(self):
+    def close(self):
         pass
 
-    def _seed(self, seed=None):
+    def seed(self, seed=None):
         self.np_random, seed1 = seeding.np_random(seed)
         seed2 = seeding.hash_seed(seed1 + 1) % 2 ** 31
         return [seed1, seed2]
 
-    def _render(self, mode="human", close=False):
+    def render(self, mode="human", close=False):
         pass

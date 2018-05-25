@@ -1,5 +1,5 @@
 # gym-x
-Simple Custom gym environments designed to test various aspects of learning.
+Simple gym environments designed to test various aspects of reinforcement learning policies using recurrent networks.
 
 ## Installation
 ```bash
