@@ -1,5 +1,5 @@
 # gym-x
-Environments designed to test various aspects of reinforcement learning policies using recurrent networks. Their minimal state representation could be found [here](../docs/README.md). 
+Environments designed to test various aspects of reinforcement learning policies using recurrent networks. Their minimal state representation could be found [here](/docs/README.md). 
 
 ## Installation
 ```bash
