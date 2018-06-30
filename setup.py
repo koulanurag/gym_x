@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(name='gym_x',
       version='0.0.1',
-      url='https://github.com/koulanurag/gym-x',
+      url='https://github.com/koulanurag/gym_x',
       py_modules=['gym_x'],
       author='Anurag Koul',
       author_email='koulanurag@gmail.com',

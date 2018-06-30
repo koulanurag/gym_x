@@ -1,9 +1,9 @@
-# gym-x
+# gym_x
 Environments designed to test various aspects of reinforcement learning policies using recurrent networks. Their minimal state representation could be found [here](/docs/README.md). 
 
 ## Installation
 ```bash
-cd gym-x
+cd gym_x
 pip install -e .
 ```
 
