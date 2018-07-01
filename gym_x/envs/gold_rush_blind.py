@@ -41,8 +41,8 @@ class GoldRushB(gym.Env):
         self._clock += 1
         next_obs = self._get_observation()
         self._update_mode()
-        # done = True if self._clock % self.spec.max_episode_steps == 0 else False
-        done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
+        done = True if self._clock % self.spec.max_episode_steps == 0 else False
+        # done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
         info = {'desired_action': self.get_desired_action()}
         return next_obs, reward, done, info
 
