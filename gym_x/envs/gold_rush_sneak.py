@@ -7,7 +7,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class GoldRushD(gym.Env):
+class GoldRushS(gym.Env):
     """
     A simple synthetic environment having multiple doors.
     There are specific no. of steps required to be made once you reach a door to acquire the gold.
@@ -15,18 +15,17 @@ class GoldRushD(gym.Env):
     Ideal policy would take corresponding no. of steps for each observation and will ignore observations
     while taking those steps.
 
-    Observation Space : Discrete
+    Observation Space : Continuous
     Action Space : Discrete
     """
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
-        self.obs_size = 2
-        self._valid_observations = np.array([[float(_) for _ in ('{0:0' + str(self.obs_size) + 'b}').format(i)]
-                                             for i in range(2 ** self.obs_size)])
+        self.obs_size = 1
+        self._valid_observations = 4
         self.total_actions = 4
         self.action_space = spaces.Discrete(self.total_actions)
-        self.obs_mode_map = {i: i % self.total_actions for i in range(len(self._valid_observations))}
+        self.obs_mode_map = {i: i % self.total_actions for i in range(self._valid_observations)}
         self._mode_steps = [2, 3, 2, 3]
 
         self._clock = None
@@ -50,8 +49,10 @@ class GoldRushD(gym.Env):
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        self._curr_obs_index = self.np_random.choice(range(len(self._valid_observations)))
-        return np.array(self._valid_observations[self._curr_obs_index])
+        self._curr_obs_index = self.np_random.choice(range(self._valid_observations))
+        o, _base = np.zeros(self.obs_size), self._curr_obs_index / self._valid_observations
+        o[0] = self.np_random.uniform(_base, _base + 0.05)
+        return o
 
     def _update_mode(self):
         if self._curr_mode_steps >= self._mode_steps[self._curr_mode]:
@@ -75,6 +76,5 @@ class GoldRushD(gym.Env):
         self.np_random, seed1 = seeding.np_random(seed)
         seed2 = seeding.hash_seed(seed1 + 1) % 2 ** 31
         return [seed1, seed2]
-
     def render(self, mode="human", close=False):
         pass

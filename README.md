@@ -1,5 +1,5 @@
 # gym_x
-Environments designed to test various aspects of reinforcement learning policies using recurrent networks. Their minimal state representation could be found [here](/docs/README.md). 
+Environments designed to test various aspects of recurrent network policies. Their minimal state representation could be found [here](/docs/README.md).
 
 ## Installation
 ```bash
@@ -11,7 +11,7 @@ pip install -e .
 ```python
 >>> import gym
 >>> import gym_x
->>> env = gym.make('GoldRushDiscrete-v0')
+>>> env = gym.make('GoldRushRead-v0')
 >>> env.action_space
 Discrete(4)
 >>> env.reset()
