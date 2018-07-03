@@ -5,16 +5,26 @@ The underlying states of the environment are defined by ```M=4``` modes of opera
 * <b>Observation Space:</b>
     * <i>o<sub>t</sub> ɛ { o<sub>1</sub> ... o<sub>4</sub> }</i>
     * <i>o<sub>*</sub> => Transaction is valid for all possible observations</i>
-* <b>Minimal State Machine:</b> States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
+* <b>Minimal State Machine:</b>
+    * <b>GoldRushRead-v0</b>
+        * requires attention to current observation only. (No Memory required)
+        * States are denoted by <i>S<sub>(action)</sub></i>
 
-    * GoldRushRead-v0
+        <p align="center">
+            <img src="./images/1.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+        </p>
 
-       ![images/1.png](images/1.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->
+    * <b>GoldRushBlind-v0</b>
+        * Only Memory required (Observations are irrelevant)
+        * States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
 
-    * GoldRushBlind-v0
+        <p align="center">
+            <img src="./images/2.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+        </p>
 
-        ![images/2.png](images/2.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->
-
-    * GoldRushSneak-v0
-
-        ![images/3.png](images/3.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->
+    * <b>GoldRushSneak-v0</b>
+        * requires attention to both memory and observations
+        * States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
+        <p align="center">
+            <img src="./images/3.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+        </p>
