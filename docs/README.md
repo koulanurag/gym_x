@@ -5,12 +5,16 @@ The underlying states of the environment are defined by ```M=4``` modes of opera
 * <b>Observation Space:</b>
     * <i>o<sub>t</sub> ɛ { o<sub>1</sub> ... o<sub>4</sub> }</i>
     * <i>o<sub>*</sub> => Transaction is valid for all possible observations</i>
-* <b>Minimal State Machine:</b>
+* <b>Minimal State Machine:</b> States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
+
     * GoldRushRead-v0
-    <img src="images/1.png" style=" width: 60%; height: 60%; display: block; margin: auto; ">
+
+       ![images/1.png](images/1.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->
 
     * GoldRushBlind-v0
-    <img src="images/2.png" style=" width: 60%; height: 60%; display: block; margin: auto; ">
+
+        ![images/2.png](images/2.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->
 
     * GoldRushSneak-v0
-    <img src="images/3.png" style=" width: 60%; height: 60%; display: block; margin: auto; ">
+
+        ![images/3.png](images/3.png) <!-- .element style=" width: 60%; height: 60%; display: block; margin: auto; " -->

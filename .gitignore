@@ -1,5 +1,7 @@
 *.egg-info
+*.egg
 *.pyc
 .idea
 /logs
+/dist
 *~
