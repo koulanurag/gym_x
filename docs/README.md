@@ -11,7 +11,7 @@ The underlying states of the environment are defined by ```M=4``` modes of opera
         * States are denoted by <i>S<sub>(action)</sub></i>
 
         <p align="center">
-            <img src="./images/1.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+            <img src="./images/1.png" width="600"/>
         </p>
 
     * <b>GoldRushBlind-v0</b>
@@ -19,12 +19,12 @@ The underlying states of the environment are defined by ```M=4``` modes of opera
         * States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
 
         <p align="center">
-            <img src="./images/2.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+            <img src="./images/2.png" width="600"/>
         </p>
 
     * <b>GoldRushSneak-v0</b>
         * requires attention to both memory and observations
         * States are denoted by <i>S<sub>( action) (clock-id)</sub></i>
         <p align="center">
-            <img src="./images/3.png" style=" width: 60%; height: 60%; display: block; margin: auto; "/>
+            <img src="./images/3.png" width="600" height="450"/>
         </p>
