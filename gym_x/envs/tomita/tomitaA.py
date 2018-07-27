@@ -7,7 +7,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class Tom1(gym.Env):
+class TomitaA(gym.Env):
     """
         Tomita Grammer : 1*
         Alphabet : {0,1}
@@ -38,10 +38,9 @@ class Tom1(gym.Env):
             raise ValueError("action must be one of %r" % range(self.total_actions))
 
         self._clock += 1
-        done = True if self._clock % self.spec.max_episode_steps == 0 else False
+        done = True if self._clock >= self.max_episode_steps else False
         reward = 1 if done and self.get_desired_action() == self.accept_action else 0
         next_obs = self._get_observation()
-        # done = True if (reward == 0 or self._clock % self.spec.max_episode_steps == 0) else False
         info = {'desired_action': self.get_desired_action()}
         return next_obs, reward, done, info
 
@@ -58,7 +57,8 @@ class Tom1(gym.Env):
 
     def reset(self):
         self._clock = 0
-        self._enforce_valid_string = (self.np_random < 0.5)
+        self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
         self.all_observations = []
         obs = self._get_observation()
         return obs
