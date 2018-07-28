@@ -53,7 +53,6 @@ class TomitaE(gym.Env):
             else:
                 prob = [0.5, 0.5]
             obs = self.np_random.choice(self.alphabet, p=prob)
-            print(prob)
         else:
             obs = self.np_random.choice(self.alphabet)
         print(obs)
@@ -73,6 +72,7 @@ class TomitaE(gym.Env):
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)  # Equally sample Accept and Reject
         self.all_observations = []
         obs = self._get_observation()
+        self._counts = [0, 0]  # each alphabet count
         return obs
 
     def close(self):

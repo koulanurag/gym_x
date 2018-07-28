@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 # Gold Rush
 register(
     id='GoldRushSneak-v0',
-    entry_point='gym_x.envs.gold_rush_sneak:GoldRushS',
+    entry_point='gym_x.envs.goldrush::GoldRushS',
     tags={'wrapper_config.TimeLimit.max_episode_steps': 300,
           'discrete': False},
     reward_threshold=300,
@@ -14,7 +14,7 @@ register(
 )
 register(
     id='GoldRushBlind-v0',
-    entry_point='gym_x.envs.gold_rush_blind:GoldRushB',
+    entry_point='gym_x.envs.goldrush:GoldRushB',
     tags={'wrapper_config.TimeLimit.max_episode_steps': 300,
           'discrete': False},
     reward_threshold=300,
@@ -22,7 +22,7 @@ register(
 )
 register(
     id='GoldRushRead-v0',
-    entry_point='gym_x.envs.gold_rush_read:GoldRushR',
+    entry_point='gym_x.envs.goldrush:GoldRushR',
     tags={'wrapper_config.TimeLimit.max_episode_steps': 300,
           'discrete': False},
     reward_threshold=300,
@@ -79,8 +79,8 @@ register(
     nondeterministic=False,
 )
 register(
-    id='TomitaF-v0',
-    entry_point='gym_x.envs.tomita:TomitaF',
+    id='TomitaG-v0',
+    entry_point='gym_x.envs.tomita:TomitaG',
     tags={'wrapper_config.TimeLimit.max_episode_steps': 300,
           'discrete': False},
     reward_threshold=1,

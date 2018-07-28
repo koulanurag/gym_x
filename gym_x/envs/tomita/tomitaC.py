@@ -46,7 +46,7 @@ class TomitaC(gym.Env):
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        if self._enforce_valid_string and self.all_observations[-1]==0:
+        if self._enforce_valid_string and self.all_observations[-1] == 0:
             pass
         obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet)
         self.all_observations.append(obs)

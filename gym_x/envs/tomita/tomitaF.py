@@ -45,22 +45,34 @@ class TomitaF(gym.Env):
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet)
+        if self._enforce_valid_string:
+            obs = self._generated_obs[self._clock]
+        else:
+            obs = self.np_random.choice(self.alphabet)
         self.all_observations.append(obs)
+        self._counts[obs] += 1
         return np.array([obs])
 
     def get_desired_action(self):
         return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
 
     def is_string_valid(self):
-        return not (0 in self.all_observations)
+        return not (self._counts[1] - self._counts[0]) % 3 == 0
 
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        if self._enforce_valid_string:
+            diff = self.np_random.randint(0, self.max_episode_steps, 3)
+            self._generated_obs = [1 for _ in range(int(0.5 * (diff + self.max_episode_steps)))]
+            self._generated_obs += [0 for _ in range(self.max_episode_steps - len(self._generated_obs))]
+            self.np_random.shuffle(self._generated_obs)
+
         self.all_observations = []
+        self._counts = [0, 0]  # each alphabet count
         obs = self._get_observation()
+
         return obs
 
     def close(self):

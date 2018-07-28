@@ -45,7 +45,14 @@ class TomitaG(gym.Env):
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet)
+        obs = self.np_random.choice(self.alphabet)
+        if self._enforce_valid_string:
+            for i, m in enumerate(self._mode_steps):
+                if m != 0:
+                    obs = i % 2
+                    self._mode_steps[i] -= 1
+                    break
+
         self.all_observations.append(obs)
         return np.array([obs])
 
@@ -53,12 +60,29 @@ class TomitaG(gym.Env):
         return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
 
     def is_string_valid(self):
-        return not (0 in self.all_observations)
+        valid = True
+        one_zero_count = 0
+        for i in range(len(self.all_observations) - 1):
+            if self.all_observations[i] == 1 and self.all_observations[i + 1] == 0:
+                one_zero_count += 1
+            if one_zero_count > 1:
+                valid = False
+                break
+        return valid
 
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+
+        self._mode_steps = [0 for _ in range(4)]
+        _modes = [_ for _ in range(4)]
+        self.np_random.shuffle(_modes)
+
+        for m in _modes:
+            self._mode_steps[m] = self.np_random.randint(0, self.max_episode_steps - sum(self._mode_steps))
+
+        self.max_episode_steps = sum(self._mode_steps)
         self.all_observations = []
         obs = self._get_observation()
         return obs
