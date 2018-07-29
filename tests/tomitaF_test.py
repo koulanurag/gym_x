@@ -26,3 +26,7 @@ if __name__ == '__main__':
                 all_observations.append(obs)
         print('Episode: {} Total Reward: {}  Obs: {}'.format(ep, total_reward,
                                                              ''.join([str(_[0]) for _ in all_observations])))
+        one_count = all_observations.count(1)
+        zero_count = all_observations.count(0)
+        print(one_count, zero_count)
+        print((one_count - zero_count) % 3 == 0 and total_reward == 1)

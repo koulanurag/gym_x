@@ -2,7 +2,7 @@ from os import path
 from setuptools import setup
 
 setup(name='gym_x',
-      version='0.0.1',
+      version='0.0.2',
       url='https://github.com/koulanurag/gym_x',
       py_modules=['gym_x'],
       author='Anurag Koul',

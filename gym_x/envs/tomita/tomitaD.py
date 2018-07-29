@@ -40,9 +40,12 @@ class TomitaD(gym.Env):
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
         reward = 1 if done and self.get_desired_action() == self.accept_action else 0
-        next_obs = self._get_observation()
-        info = {'desired_action': self.get_desired_action()}
+        next_obs = self._get_observation() if not done else self._get_random_observation()
+        info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
+
+    def _get_random_observation(self):
+        return self.np_random.choice(self.alphabet)
 
     def _get_observation(self):
         if self._enforce_valid_string:

@@ -26,3 +26,4 @@ if __name__ == '__main__':
                 all_observations.append(obs)
         print('Episode: {} Total Reward: {}  Obs: {}'.format(ep, total_reward,
                                                              ''.join([str(_[0]) for _ in all_observations])))
+        print(not ('000' in ''.join([str(_[0]) for _ in all_observations])))

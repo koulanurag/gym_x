@@ -55,7 +55,7 @@ class TomitaE(gym.Env):
             obs = self.np_random.choice(self.alphabet, p=prob)
         else:
             obs = self.np_random.choice(self.alphabet)
-        print(obs)
+
         self.all_observations.append(obs)
         self._counts[obs] += 1
         return np.array([obs])
@@ -71,8 +71,8 @@ class TomitaE(gym.Env):
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1, 2))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)  # Equally sample Accept and Reject
         self.all_observations = []
-        obs = self._get_observation()
         self._counts = [0, 0]  # each alphabet count
+        obs = self._get_observation()
         return obs
 
     def close(self):

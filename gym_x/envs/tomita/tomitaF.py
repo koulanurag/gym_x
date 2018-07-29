@@ -3,6 +3,7 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +41,12 @@ class TomitaF(gym.Env):
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
         reward = 1 if done and self.get_desired_action() == self.accept_action else 0
-        next_obs = self._get_observation()
-        info = {'desired_action': self.get_desired_action()}
+        next_obs = self._get_observation() if not done else self.__get_random_observation()
+        info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
+
+    def __get_random_observation(self):
+        return self.np_random.choice(self.alphabet)
 
     def _get_observation(self):
         if self._enforce_valid_string:
@@ -57,17 +61,19 @@ class TomitaF(gym.Env):
         return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
 
     def is_string_valid(self):
-        return not (self._counts[1] - self._counts[0]) % 3 == 0
+        return (self._counts[1] - self._counts[0]) % 3 == 0
 
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
         if self._enforce_valid_string:
-            diff = self.np_random.randint(0, self.max_episode_steps, 3)
-            self._generated_obs = [1 for _ in range(int(0.5 * (diff + self.max_episode_steps)))]
-            self._generated_obs += [0 for _ in range(self.max_episode_steps - len(self._generated_obs))]
+            zero_count = self.np_random.randint(0, self.max_episode_steps // 2)
+            one_count = zero_count + 3 * self.np_random.randint(0, 10)
+            self._generated_obs = [1 for _ in range(one_count)]
+            self._generated_obs += [0 for _ in range(zero_count)]
             self.np_random.shuffle(self._generated_obs)
+            self.max_episode_steps = len(self._generated_obs)
 
         self.all_observations = []
         self._counts = [0, 0]  # each alphabet count
