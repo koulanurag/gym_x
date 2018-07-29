@@ -29,6 +29,7 @@ class TomitaB(gym.Env):
         self.min_steps = 10
         self.max_steps = 50
 
+        self._counts = [0, 0]
         self.enc = True
         self.all_observations = []
         self._enforce_valid_string = True
@@ -48,22 +49,23 @@ class TomitaB(gym.Env):
         if self._enforce_valid_string:
             obs = (1 - self.all_observations[-1]) if len(self.all_observations) > 0 else 1
         else:
-            obs = self.np_random.choice(self.alphabet)
+            obs = self.np_random.choice(self.alphabet, p=self._probs)
 
+        self._counts[obs] += 1
         self.all_observations.append(obs)
         return np.array([obs])
 
     def get_desired_action(self):
         if self._enforce_valid_string:
             # Accept even length strings
-            action = self.accept_action if sum(self.counts) % 2 == 0 else self.reject_action
+            action = self.accept_action if sum(self._counts) % 2 == 0 else self.reject_action
         else:
             action = self.is_string_valid()
         return action
 
     def is_string_valid(self):
         valid = True
-        for o, i in enumerate(self.all_observations):
+        for i, o in enumerate(self.all_observations):
             if (i % 2 == 0 and o != 1) or (i % 2 == 1 and o != 0):
                 valid = False
                 break
@@ -75,6 +77,9 @@ class TomitaB(gym.Env):
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1, 2))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
         self.all_observations = []
+        self._counts = [0, 0]
+        self._probs = self.np_random.random_sample()
+        self._probs = [self._probs, 1 - self._probs]
         obs = self._get_observation()
         return obs
 

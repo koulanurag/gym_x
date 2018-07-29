@@ -25,11 +25,12 @@ class TomitaC(gym.Env):
         self.action_space = spaces.Discrete(self.total_actions)
 
         self._clock = None
+        self._next_zeros = None
         self.seed()
 
         self.min_steps = 10
         self.max_steps = 50
-
+        self.last_one_count = 0
         self.enc = True
         self.all_observations = []
         self._enforce_valid_string = True
@@ -46,23 +47,55 @@ class TomitaC(gym.Env):
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        if self._enforce_valid_string and self.all_observations[-1] == 0:
-            pass
-        obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet)
+        obs = self.np_random.choice(self.alphabet, p=self._probs)
+        if self._enforce_valid_string and 0<self._clock < self.max_episode_steps:
+            if self._next_zeros >= 0:
+                if self._next_zeros == 0:
+                    obs = 1
+                else:
+                    obs = 0
+                self._next_zeros -= 1
+            elif 0 < self._clock and self.all_observations[-1] ==0  and self.last_one_count % 3 == 0:
+                self._next_zeros = 2 * self.np_random.randint(2, (
+                        self.max_episode_steps - len(self.all_observations)) // 8 + 4)
+                self._next_zeros -= 1
+                obs = 0
+                self.last_one_count = 0
+        self.last_one_count += obs
         self.all_observations.append(obs)
         return np.array([obs])
 
     def get_desired_action(self):
-        return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
+        return self.accept_action if self.is_string_valid() else self.reject_action
 
     def is_string_valid(self):
-        return not (0 in self.all_observations)
+        valid = False
+        count = [0, 0]
+        first_one = True
+        for i, o in enumerate(self.all_observations):
+            if first_one and o == 1:
+                first_one = False
+            if not first_one and o == 1 and i > 1 and self.all_observations[i - 1] == 0:
+                if count[1] % 2 != 0 and count[0] % 2 != 0:
+                    valid = False
+                    break
+                count[o] = 1
+            else:
+                count[o] += 1
+
+        return valid
 
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        # self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._enforce_valid_string = 1
         self.all_observations = []
+        self._next_zeros = 0
+        # self._probs = self.np_random.random_sample()
+        # self._probs = [self._probs, 1 - self._probs]
+        self._probs = [0.5, 0.5]
+        self.last_one_count = 0
         obs = self._get_observation()
         return obs
 
