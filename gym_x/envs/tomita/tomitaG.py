@@ -26,7 +26,7 @@ class TomitaG(gym.Env):
         self._clock = None
         self.seed()
 
-        self.min_steps = 10
+        self.min_steps = 1
         self.max_steps = 50
 
         self.enc = True
@@ -39,13 +39,16 @@ class TomitaG(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
-        next_obs = self._get_observation()
-        info = {'desired_action': self.get_desired_action()}
+        reward = 1 if done and self.get_desired_action() == action else 0
+        next_obs = self._get_observation() if not done else self._get_random_observation()
+        info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
 
+    def _get_random_observation(self):
+        return self.np_random.choice(self.alphabet)
+
     def _get_observation(self):
-        obs = self.np_random.choice(self.alphabet)
+        obs = self.np_random.choice(self.alphabet, p=self._probs)
         if self._enforce_valid_string:
             for i, m in enumerate(self._mode_steps):
                 if m != 0:
@@ -57,13 +60,15 @@ class TomitaG(gym.Env):
         return np.array([obs])
 
     def get_desired_action(self):
-        return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
+        # return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
+        return self.accept_action if self.is_string_valid() else self.reject_action
 
-    def is_string_valid(self):
+    def is_string_valid(self,obs=None):
+        obs = self.all_observations if obs is None else obs
         valid = True
         one_zero_count = 0
-        for i in range(len(self.all_observations) - 1):
-            if self.all_observations[i] == 1 and self.all_observations[i + 1] == 0:
+        for i in range(len(obs) - 1):
+            if obs[i] == 1 and obs[i + 1] == 0:
                 one_zero_count += 1
             if one_zero_count > 1:
                 valid = False
@@ -73,7 +78,7 @@ class TomitaG(gym.Env):
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.25)
 
         self._mode_steps = [0 for _ in range(4)]
         _modes = [_ for _ in range(4)]
@@ -83,6 +88,11 @@ class TomitaG(gym.Env):
             self._mode_steps[m] = self.np_random.randint(0, self.max_episode_steps - sum(self._mode_steps))
 
         self.max_episode_steps = sum(self._mode_steps)
+
+        self._probs = self.np_random.random_sample()
+        self._probs = [self._probs, 1 - self._probs]
+        self.np_random.shuffle(self._probs)
+
         self.all_observations = []
         obs = self._get_observation()
         return obs

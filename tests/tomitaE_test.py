@@ -12,7 +12,9 @@ if __name__ == '__main__':
     env = gym.make(args.env)
     env.seed(0)
     done = False
-    for ep in range(10):
+    ep_count = 100
+    valid_count = 0
+    for ep in range(ep_count):
         done = False
         obs = env.reset()
         action = env.env.get_desired_action()
@@ -29,4 +31,7 @@ if __name__ == '__main__':
         one_count = all_observations.count(1)
         zero_count = all_observations.count(0)
         print(one_count, zero_count)
-        print(one_count % 2 == 0 and zero_count % 2 == 0)
+        valid = one_count % 2 == 0 and zero_count % 2 == 0
+        valid_count += 1 if valid else 0
+        print(valid)
+    print(valid_count / ep_count)

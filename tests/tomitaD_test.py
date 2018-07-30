@@ -12,7 +12,8 @@ if __name__ == '__main__':
     env = gym.make(args.env)
     env.seed(0)
     done = False
-    for ep in range(10):
+    valid_count = 0
+    for ep in range(100):
         done = False
         obs = env.reset()
         action = env.env.get_desired_action()
@@ -26,4 +27,8 @@ if __name__ == '__main__':
                 all_observations.append(obs)
         print('Episode: {} Total Reward: {}  Obs: {}'.format(ep, total_reward,
                                                              ''.join([str(_[0]) for _ in all_observations])))
-        print(not ('000' in ''.join([str(_[0]) for _ in all_observations])))
+        valid = not ('000' in ''.join([str(_[0]) for _ in all_observations]))
+        if valid:
+            valid_count += 1
+        print(valid)
+    print(valid_count / 100)

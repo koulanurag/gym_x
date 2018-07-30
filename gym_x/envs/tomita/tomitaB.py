@@ -26,7 +26,7 @@ class TomitaB(gym.Env):
         self._clock = None
         self.seed()
 
-        self.min_steps = 10
+        self.min_steps = 1
         self.max_steps = 50
 
         self._counts = [0, 0]
@@ -40,13 +40,16 @@ class TomitaB(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
-        next_obs = self._get_observation()
-        info = {'desired_action': self.get_desired_action()}
+        reward = 1 if done and self.get_desired_action() == action else 0
+        next_obs = self._get_observation() if not done else self._get_random_observation()
+        info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
 
+    def _get_random_observation(self):
+        return self.np_random.choice(self.alphabet)
+
     def _get_observation(self):
-        if self._enforce_valid_string:
+        if self._enforce_valid_string or (self._partial_valid_string and self._partial_valid_len >= self._clock):
             obs = (1 - self.all_observations[-1]) if len(self.all_observations) > 0 else 1
         else:
             obs = self.np_random.choice(self.alphabet, p=self._probs)
@@ -60,22 +63,32 @@ class TomitaB(gym.Env):
             # Accept even length strings
             action = self.accept_action if sum(self._counts) % 2 == 0 else self.reject_action
         else:
-            action = self.is_string_valid()
+            action = self.accept_action if self.is_string_valid() else self.reject_action
         return action
 
     def is_string_valid(self):
-        valid = True
-        for i, o in enumerate(self.all_observations):
-            if (i % 2 == 0 and o != 1) or (i % 2 == 1 and o != 0):
-                valid = False
-                break
-
+        if len(self.all_observations) > 1 and len(self.all_observations) % 2 == 0:
+            valid = True
+            for i, o in enumerate(self.all_observations):
+                if (i % 2 == 0 and o != 1) or (i % 2 == 1 and o != 0):
+                    valid = False
+                    break
+        else:
+            valid = False
         return valid
 
     def reset(self):
         self._clock = 0
-        self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1, 2))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._partial_valid_string, self._partial_valid_len = False, 0
+        if self._enforce_valid_string:
+            self.max_episode_steps = self.np_random.choice(range(2, self.max_steps + 1, 2))
+        else:
+            self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
+            self._partial_valid_string = (self.np_random.random_sample() <= 0.25)
+            if self._partial_valid_string:
+                self._partial_valid_len = self.np_random.choice(range(0, self.max_episode_steps, 2))
+
         self.all_observations = []
         self._counts = [0, 0]
         self._probs = self.np_random.random_sample()

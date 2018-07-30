@@ -26,7 +26,7 @@ class TomitaE(gym.Env):
         self._clock = None
         self.seed()
 
-        self.min_steps = 10
+        self.min_steps = 1
         self.max_steps = 50
 
         self.enc = True
@@ -41,20 +41,24 @@ class TomitaE(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
-        next_obs = self._get_observation()
-        info = {'desired_action': self.get_desired_action()}
+        reward = 1 if done and self.get_desired_action() == action else 0
+        next_obs = self._get_observation() if not done else self._get_random_observation()
+        info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
+
+    def _get_random_observation(self):
+        return self.np_random.choice(self.alphabet)
 
     def _get_observation(self):
         if self._enforce_valid_string:
-            if self._clock > 0:
-                prob = [self._counts[1] / sum(self._counts), self._counts[0] / sum(self._counts)]
-            else:
-                prob = [0.5, 0.5]
-            obs = self.np_random.choice(self.alphabet, p=prob)
+            obs = self._generated_obs[self._clock]
+            # if self._clock > 0:
+            #     prob = [self._counts[1] / sum(self._counts), self._counts[0] / sum(self._counts)]
+            # else:
+            #     prob = [0.5, 0.5]
+            # obs = self.np_random.choice(self.alphabet, p=prob)
         else:
-            obs = self.np_random.choice(self.alphabet)
+            obs = self.np_random.choice(self.alphabet, p=self._probs)
 
         self.all_observations.append(obs)
         self._counts[obs] += 1
@@ -68,8 +72,27 @@ class TomitaE(gym.Env):
 
     def reset(self):
         self._clock = 0
-        self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1, 2))
+
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)  # Equally sample Accept and Reject
+        if self._enforce_valid_string:
+            obs = self.np_random.choice([0, 1])
+
+            obs_count = self.np_random.choice(range(2, self.max_steps, 2))
+            non_obs_count = self.np_random.choice(range(0, self.max_steps - obs_count + 1, 2))
+
+            self._generated_obs = [obs] * obs_count
+            self._generated_obs += [1 - obs] * non_obs_count
+            self.np_random.shuffle(self._generated_obs)
+            print(self._generated_obs)
+
+            self.max_episode_steps = len(self._generated_obs)
+        else:
+            self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
+
+        self._probs = self.np_random.random_sample()
+        self._probs = [self._probs, 1 - self._probs]
+        self.np_random.shuffle(self._probs)
+
         self.all_observations = []
         self._counts = [0, 0]  # each alphabet count
         obs = self._get_observation()

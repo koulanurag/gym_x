@@ -26,7 +26,7 @@ class TomitaA(gym.Env):
         self._clock = None
         self.seed()
 
-        self.min_steps = 10
+        self.min_steps = 1
         self.max_steps = 50
 
         self.enc = True
@@ -39,13 +39,13 @@ class TomitaA(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
+        reward = 1 if done and self.get_desired_action() == action else 0
         next_obs = self._get_observation()
         info = {'desired_action': self.get_desired_action()}
         return next_obs, reward, done, info
 
     def _get_observation(self):
-        obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet)
+        obs = 1 if self._enforce_valid_string else self.np_random.choice(self.alphabet, p=self._probs)
         self.all_observations.append(obs)
         return np.array([obs])
 
@@ -59,6 +59,8 @@ class TomitaA(gym.Env):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
         self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._probs = self.np_random.random_sample()
+        self._probs = [self._probs, 1 - self._probs]
         self.all_observations = []
         obs = self._get_observation()
         return obs
