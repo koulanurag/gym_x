@@ -64,9 +64,12 @@ class TomitaD(gym.Env):
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.3)
+
         self._probs = self.np_random.random_sample()
         self._probs = [self._probs, 1 - self._probs]
+        #self._probs.sort(reverse=True)  # Keep High Probability for 0s
+
         self.all_observations = []
         obs = self._get_observation()
         return obs

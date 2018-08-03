@@ -5,14 +5,14 @@ import argparse
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='test env')
-    parser.add_argument('--env', default='GoldRushRead-v0', help="Name of the environment")
+    parser.add_argument('--env', default='TomitaE-v0', help="Name of the environment")
 
     args = parser.parse_args()
 
     env = gym.make(args.env)
     env.seed(0)
     done = False
-    ep_count = 100
+    ep_count = 1000
     valid_count = 0
     for ep in range(ep_count):
         done = False

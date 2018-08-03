@@ -27,8 +27,8 @@ class TomitaF(gym.Env):
         self._clock = None
         self.seed()
 
-        self.min_steps = 10
-        self.max_steps = 50
+        self.min_steps = 3
+        self.max_steps = 30
 
         self.enc = True
         self.all_observations = []
@@ -40,7 +40,7 @@ class TomitaF(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
+        reward = 1 if done and self.get_desired_action() == action else 0
         next_obs = self._get_observation() if not done else self.__get_random_observation()
         info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
@@ -52,7 +52,7 @@ class TomitaF(gym.Env):
         if self._enforce_valid_string:
             obs = self._generated_obs[self._clock]
         else:
-            obs = self.np_random.choice(self.alphabet)
+            obs = self.np_random.choice(self.alphabet, p=self._probs)
         self.all_observations.append(obs)
         self._counts[obs] += 1
         return np.array([obs])
@@ -65,11 +65,15 @@ class TomitaF(gym.Env):
 
     def reset(self):
         self._clock = 0
+        self._probs = self.np_random.random_sample()
+        self._probs = [self._probs, 1 - self._probs]
+        self.np_random.shuffle(self._probs)
+
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.25)
         if self._enforce_valid_string:
             zero_count = self.np_random.randint(0, self.max_episode_steps // 2)
-            one_count = zero_count + 3 * self.np_random.randint(0, 10)
+            one_count = zero_count + 3 * self.np_random.randint(1, 10)
             self._generated_obs = [1 for _ in range(one_count)]
             self._generated_obs += [0 for _ in range(zero_count)]
             self.np_random.shuffle(self._generated_obs)

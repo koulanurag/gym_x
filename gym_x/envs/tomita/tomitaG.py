@@ -63,7 +63,7 @@ class TomitaG(gym.Env):
         # return self.accept_action if self._enforce_valid_string or self.is_string_valid() else self.reject_action
         return self.accept_action if self.is_string_valid() else self.reject_action
 
-    def is_string_valid(self,obs=None):
+    def is_string_valid(self, obs=None):
         obs = self.all_observations if obs is None else obs
         valid = True
         one_zero_count = 0
@@ -78,7 +78,7 @@ class TomitaG(gym.Env):
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.25)
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.3)
 
         self._mode_steps = [0 for _ in range(4)]
         _modes = [_ for _ in range(4)]

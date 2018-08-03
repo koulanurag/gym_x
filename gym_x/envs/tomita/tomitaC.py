@@ -25,13 +25,11 @@ class TomitaC(gym.Env):
         self.action_space = spaces.Discrete(self.total_actions)
 
         self._clock = None
-        self._next_zeros = None
         self.seed()
 
-        self.min_steps = 10
+        self.min_steps = 1
         self.max_steps = 50
-        self.last_one_count = 0
-        self.enc = True
+
         self.all_observations = []
         self._enforce_valid_string = True
 
@@ -41,7 +39,7 @@ class TomitaC(gym.Env):
 
         self._clock += 1
         done = True if self._clock >= self.max_episode_steps else False
-        reward = 1 if done and self.get_desired_action() == self.accept_action else 0
+        reward = 1 if done and self.get_desired_action() == action else 0
         next_obs = self._get_observation() if not done else self._get_random_observation()
         info = {'desired_action': self.get_desired_action() if not done else None}
         return next_obs, reward, done, info
@@ -86,10 +84,10 @@ class TomitaC(gym.Env):
     def reset(self):
         self._clock = 0
         self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.4)
         self._probs = self.np_random.random_sample()
         self._probs = [self._probs, 1 - self._probs]
-        print(self._enforce_valid_string)
+
         if self._enforce_valid_string:
             self._generated_observation = []
             obs = self.np_random.choice([0, 1])
@@ -118,15 +116,3 @@ class TomitaC(gym.Env):
 
     def render(self, mode="human", close=False):
         pass
-
-    def _temp(self):
-        self.max_episode_steps = self.np_random.choice(range(self.min_steps, self.max_steps + 1))
-        self._generated_observation = []
-        while len(self._generated_observation) < self.max_episode_steps:
-            obs = self.np_random.choice([0, 1])
-            n = self.np_random.randint(0, 10)
-            self._generated_observation += [obs] * n
-            if obs == 1 and n % 2 != 0:
-                self._generated_observation += [0] * 2 * self.np_random.randint(1, 10)
-
-        self.max_episode_steps = len(self._generated_observation)

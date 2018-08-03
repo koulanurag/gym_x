@@ -73,7 +73,7 @@ class TomitaE(gym.Env):
     def reset(self):
         self._clock = 0
 
-        self._enforce_valid_string = (self.np_random.random_sample() <= 0.5)  # Equally sample Accept and Reject
+        self._enforce_valid_string = (self.np_random.random_sample() <= 0.4)  # Equally sample Accept and Reject
         if self._enforce_valid_string:
             obs = self.np_random.choice([0, 1])
 
@@ -83,7 +83,6 @@ class TomitaE(gym.Env):
             self._generated_obs = [obs] * obs_count
             self._generated_obs += [1 - obs] * non_obs_count
             self.np_random.shuffle(self._generated_obs)
-            print(self._generated_obs)
 
             self.max_episode_steps = len(self._generated_obs)
         else:

@@ -5,7 +5,7 @@ import argparse
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='test env')
-    parser.add_argument('--env', default='GoldRushRead-v0', help="Name of the environment")
+    parser.add_argument('--env', default='TomitaD-v0', help="Name of the environment")
 
     args = parser.parse_args()
 
@@ -13,7 +13,8 @@ if __name__ == '__main__':
     env.seed(0)
     done = False
     valid_count = 0
-    for ep in range(100):
+    ep_count = 1000
+    for ep in range(ep_count):
         done = False
         obs = env.reset()
         action = env.env.get_desired_action()
@@ -31,4 +32,4 @@ if __name__ == '__main__':
         if valid:
             valid_count += 1
         print(valid)
-    print(valid_count / 100)
+    print(valid_count / ep_count)
