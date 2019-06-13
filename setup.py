@@ -9,5 +9,5 @@ setup(name='gym_x',
       author_email='koulanurag@gmail.com',
       long_description=open(path.join(path.abspath(path.dirname(__file__)), 'README.md')).read(),
       license='MIT',
-      install_requires=['gym>=0.2.3'],
+      install_requires=['gym==0.12'],
       )
