@@ -22,5 +22,5 @@ array([1., 1.])
 
 ## Environments
 
-- [GoldRush/Mode Counter Environment](/doc/README.md/#gold-rush-environments)
-- [Tomita Grammar](/doc/README.md/#tomita-grammar)
+- [GoldRush/Mode Counter Environment](/docs/README.md/#gold-rush-environments)
+- [Tomita Grammar](/docs/README.md/#tomita-grammar)
